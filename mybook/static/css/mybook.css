@@ -1,0 +1,50 @@
+.page-header {
+    background-color:skyblue;
+    margin-top: 0;
+    padding: 25px 25px 25px 50px;
+}
+
+h1 a {
+    color:gray;
+    font-family: 'Amatic SC', cursive;;
+}
+h2  {
+    font-weight: bold;
+    
+    font-family: "ＭＳ Ｐ明朝";
+}
+p {
+    font-family: "Hannari";
+}
+
+.content {
+    margin-left: 40px;
+}
+
+.date {
+    color: #828282;
+}
+
+.save {
+    float: right;
+}
+
+.post-form textarea, .post-form input {
+    width: 100%;
+}
+
+.top-menu, .top-menu:hover, .top-menu:visited {
+    color: #ffffff;
+    float: right;
+    font-size: 26pt;
+    margin-right: 20px;
+}
+
+.post {
+    margin-bottom: 70px;
+}
+
+.post h2 a, .post h2 a:visited {
+    color:blue;
+    font-family: "ＭＳ Ｐ明朝";
+}
