@@ -10,6 +10,14 @@
 
     </head>
     <body>
+            {% if user.id  %}
+            <p>ログインしました．</p>
+            <p>こんにちは，{{ user.username }}さん</p>
+            <a href="{% url 'logout' %}">ログアウトする</a>
+            {% else %}
+            <a href="{% url 'login' %}">ログイン</a>
+            <a href="{% url 'create_account' %}">アカウント作成</a>
+            {% endif %}
         <div  class="page-header"> 
             <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
             <h1><a href="/">My Book</a></h1>

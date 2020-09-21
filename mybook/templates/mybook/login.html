@@ -1,0 +1,32 @@
+
+{% load static %}
+<html>
+    <head>
+        <title>My Book</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="{% static 'css/mybook.css' %}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Amatic+SC:700">
+        <link href="https://fonts.googleapis.com/earlyaccess/hannari.css" rel="stylesheet">
+
+    </head>
+  <body>
+    <div  class="page-header"> 
+        <h1><a href="/">My Book</a></h1>
+    </div>
+
+    {% if form.errors  %}
+    <p>ユーザーID, パスワードが一致しません．</p>
+    {% endif %}
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <label>ユーザーID</label>
+      {{ form.username }}
+      {{ form.username.errors }}<br>
+      <label>パスワード</label>
+      {{ form.password }}
+      {{ form.password.errors }}
+      <button type = "submit">ログイン</button>
+    </form>
+  </body>
+</html>
