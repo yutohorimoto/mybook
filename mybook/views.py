@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate,logout
 from django.views import View
 from django.views.generic import CreateView, TemplateView
 from django.utils import timezone
 from .models import Post
 from .forms import PostForm,UserCreateForm, LoginForm
+from django.contrib.auth import views as auth_views
 
 # Create your views here.
 def post_list(request):
@@ -21,10 +22,12 @@ def post_new(request):
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+            #commit=False は Post モデルをまだ保存しないという意味
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
             return redirect('post_detail', pk=post.pk)
+            #新しく作成されたポストの post_detail ページに移動
     else:
         form = PostForm()
     return render(request, 'mybook/post_edit.html', {'form': form})
@@ -86,5 +89,12 @@ class Account_login(View):
 account_login = Account_login.as_view()
 
 
-#def Account_logout(request):
-#    return render(request, 'mybook/login.html')
+def Account_logout(request):
+
+    logout(request,user)
+    return render(request, 'mybook/logout.html')
+
+class MyLogoutView(auth_views.LogoutView):
+    
+    # ログアウト時に表示されるテンプレート
+    template_name = "templates/mybook/logout.html"

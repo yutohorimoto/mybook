@@ -15,5 +15,7 @@ urlpatterns = [
     #ath(r'logout/', logout, {'template_name': 'login.html'}, name='logout'), 
     path(r'create/', views.create_account, name='create_account'),
     path(r'login/', views.account_login, name='login'),
-    path(r'logout/',logout,  name='logout'), 
+    #path(r'logout/',views.Account_logout, name='logout'), 
+    #path("logout/",auth_views.LogoutView.as_view(),name="logout"),
+    path("logout/",views.MyLogoutView.as_view(template_name='mybook/logout.html'),name="logout"),
 ]
