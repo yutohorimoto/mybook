@@ -9,6 +9,8 @@ from .forms import PostForm,UserCreateForm, LoginForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.core.exceptions import PermissionDenied
+
 
 @login_required
 def post_list(request):
@@ -51,7 +53,7 @@ def post_edit(request, pk):
                 post.save()
                 return redirect('post_detail', pk=post.pk)
             else:
-                raise Http404
+                raise PermissionDenied
 
     else:
         form = PostForm(instance=post)
@@ -64,7 +66,7 @@ def post_delete(request,pk):
         post.delete()
         return redirect('post_list')
     else:
-        raise Http404
+        raise PermissionDenied
 
 
 

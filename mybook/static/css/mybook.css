@@ -5,7 +5,7 @@
 }
 
 h1 a {
-    color:plum;
+    color:gray;
     font-family: 'Amatic SC', cursive;;
 }
 h2  {
@@ -19,7 +19,7 @@ p {
 
 .content {
     
-    background-color: greenyellow;
+    background-color: rgb(135, 218, 135);
 }
 .row{
     margin-left: 40px;
@@ -47,10 +47,9 @@ p {
 
 .post {
     margin-bottom: 70px;
-    background-color: rgb(234, 255, 47);
 }
 
 .post h2 a, .post h2 a:visited {
-    color:blue;
+    color:green;
     font-family: "ＭＳ Ｐ明朝";
 }
