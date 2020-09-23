@@ -7,16 +7,20 @@ from django.utils import timezone
 from .models import Post
 from .forms import PostForm,UserCreateForm, LoginForm
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
-# Create your views here.
+@login_required
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
     return render(request, 'mybook/post_list.html', {'posts':posts})
 
+@login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'mybook/post_detail.html', {'post': post})
 
+@login_required
 def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -32,6 +36,7 @@ def post_new(request):
         form = PostForm()
     return render(request, 'mybook/post_edit.html', {'form': form})
 
+@login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     #編集したいPost モデルを取得
@@ -40,14 +45,27 @@ def post_edit(request, pk):
         #formを保存するとき
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
+            if post.author == request.user:
+                post.author = request.user
+                post.published_date = timezone.now()
+                post.save()
+                return redirect('post_detail', pk=post.pk)
+            else:
+                raise Http404
+
     else:
         form = PostForm(instance=post)
         #formを開くだけのとき
     return render(request, 'mybook/post_edit.html', {'form': form})
+
+def post_delete(request,pk):
+    post = get_object_or_404(Post, pk=pk)
+    if post.author == request.user:
+        post.delete()
+        return redirect('post_list')
+    else:
+        raise Http404
+
 
 
 #アカウント作成

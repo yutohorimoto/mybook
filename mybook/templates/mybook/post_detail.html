@@ -9,6 +9,7 @@
         {% endif %}
         {% if user.is_authenticated %}
             <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a href="{% url 'post_delete' pk=post.pk %}">削除</a>
         {% endif %}
         <h2>{{ post.book_title }}</h2>
         <h5>作者：{{post.book_author}}</h5>
