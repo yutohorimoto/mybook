@@ -1,10 +1,15 @@
 {% extends 'mybook/base.html' %}
 
 {% block content %}
-    <h2>edit post</h2>
+    <h2>new/edit post</h2>
     <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
+        <!--{{ form.as_p }}-->
+        <p>タイトル　{{form.book_title}}</p>
+        <p>作者　{{form.book_author}}</p>
+        <p>ジャンル {{form.book_label}}</p>
+        <p>あらすじ/本の内容 {{form.book_int}}</p>
+        <p>感想 {{form.text}}</p>
         <button type="submit" class="save btn btn-default">Save</button>
     </form>
-    
+
 {% endblock %}
