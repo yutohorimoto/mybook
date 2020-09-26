@@ -2,7 +2,6 @@
 
 {% block content %}
         {% for post in posts %}
-            <table>
             <div class="post">
                 <div class="date">
                     <p>日時: {{ post.published_date }}</p>
@@ -12,6 +11,5 @@
                 <h5>作者：{{post.book_author}}</h5>
                 <p>感想： {{ post.text|linebreaksbr }}</p>
             </div>
-            </table>
         {% endfor %}
 {% endblock %}

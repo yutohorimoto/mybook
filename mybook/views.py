@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate,logout
 from django.views import View
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView,ListView,DetailView,DeleteView
 from django.utils import timezone
 from .models import Post
 from .forms import PostForm,UserCreateForm, LoginForm
@@ -10,17 +10,30 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse, reverse_lazy
 
 
-@login_required
-def post_list(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'mybook/post_list.html', {'posts':posts})
+#@login_required
+#def post_list(request):
+#    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+#    return render(request, 'mybook/post_list.html', {'posts':posts})
 
-@login_required
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    return render(request, 'mybook/post_detail.html', {'post': post})
+class PostListView(LoginRequiredMixin,ListView):
+    template_name = 'mybook/post_list.html'
+    #model = Post
+    queryset = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+    context_object_name = 'posts'
+
+#@login_required
+#def post_detail(request, pk):
+#    post = get_object_or_404(Post, pk=pk)
+#    return render(request, 'mybook/post_detail.html', {'post': post})
+
+class PostDetail(LoginRequiredMixin,DetailView):
+    template_name = 'mybook/post_detail.html'
+    model = Post
+    context_object_name = 'post'
 
 @login_required
 def post_new(request):
@@ -68,7 +81,11 @@ def post_delete(request,pk):
     else:
         raise PermissionDenied
 
-
+class PostDelete(DeleteView):
+    template_name = 'mybook/post_confirm_delete.html'
+    model = Post
+    context_object_name = 'post'
+    success_url = reverse_lazy('post_list')
 
 #アカウント作成
 class Create_account(CreateView):
@@ -109,12 +126,20 @@ class Account_login(View):
 account_login = Account_login.as_view()
 
 
-def Account_logout(request):
+#def Account_logout(request):
 
-    logout(request,user)
-    return render(request, 'mybook/logout.html')
+#    logout(request,user)
+#    return render(request, 'mybook/logout.html')
 
 class MyLogoutView(auth_views.LogoutView):
     
     # ログアウト時に表示されるテンプレート
     template_name = "templates/mybook/logout.html"
+
+#class MyPage(LoginRequiredMixin, TemplateView):
+    #template_name = 'templates/mybook/mypage.html'
+
+def get_myposts(request):
+        posts = Post.objects.filter(published_date__lte=timezone.now(),author=request.user).order_by('published_date')
+        #return posts
+        return render(request, 'mybook/mypage.html', {'posts':posts})
