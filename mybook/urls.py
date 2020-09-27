@@ -22,7 +22,8 @@ urlpatterns = [
     #path("logout/",auth_views.LogoutView.as_view(),name="logout"),
     path("logout/",views.MyLogoutView.as_view(template_name='mybook/logout.html'),name="logout"),
     #path('mypage/',views.MyPage.as_view(template_name='mybook/mypage.html'),name ='mypage')
-    path('mypage/',views.get_myposts,name ='mypage'),
+    path('mypage/',views.MyPageView.as_view(),name ='mypage'),
     path('accounts/login/',views.account_login, name='account_login'),
     #path('follow/<int:pk>/', views.followPost, name='follow'),
+    path('post/<int:pk>/like', views.like, name='like'),
 ]

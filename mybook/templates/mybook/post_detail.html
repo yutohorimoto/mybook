@@ -12,10 +12,12 @@
             <a href="{% url 'post_delete' pk=post.pk %}">削除</a>
         {% endif %}
         <p>User: {{ post.author}}</p>
-        <h2>{{ post.book_title }}</h2>
+        <h2>{{ post.book_title }}</h2><span class="star5_rating" data-rate='{{post.rate}}'></span>
         <h5>作者：{{post.book_author}}</h5>
         <h5>ジャンル：{{post.book_label}}</h5>
         <p>あらすじ/本の内容：{{post.book_int|linebreaksbr}}</p>
         <p>感想：{{ post.text|linebreaksbr }}</p>
+        <a href="{% url 'like' pk=post.pk %}">いいね！</a>{{ post.like_num }}
+
     </div>
 {% endblock %}

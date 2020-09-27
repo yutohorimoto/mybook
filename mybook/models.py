@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 label_choices = (
             (0, '小説'),
@@ -19,6 +20,8 @@ class Post(models.Model):
     book_label = models.IntegerField(choices=label_choices,blank=True, null=True)
     book_int = models.CharField(max_length=200,blank=True, null=True)
     text = models.TextField()
+    rate = models.IntegerField(blank=False, default=1, validators=[MaxValueValidator(5),MinValueValidator(1)]*1)
+    like_num = models.IntegerField(default=0)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
 
@@ -31,7 +34,7 @@ class Post(models.Model):
         return self.book_author
 
 
-    class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like_user')
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='like_user')
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)

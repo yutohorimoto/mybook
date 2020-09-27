@@ -10,6 +10,7 @@
                 <p>User: {{ post.author}}</p>
                 <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.book_title }}</a></h2>
                 <h5>作者：{{post.book_author}}</h5>
+                <span class="star5_rating" data-rate='{{post.rate}}'></span>
                 <p>感想： {{ post.text|linebreaksbr }}</p>
             </div>
             </table>

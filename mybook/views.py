@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate,logout
 from django.views import View
 from django.views.generic import CreateView, TemplateView,ListView,DetailView,DeleteView
 from django.utils import timezone
-from .models import Post
+from .models import Post,Like
 from .forms import PostForm,UserCreateForm, LoginForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,7 @@ from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-
+from django.contrib import messages
 
 #@login_required
 #def post_list(request):
@@ -139,7 +139,46 @@ class MyLogoutView(auth_views.LogoutView):
 #class MyPage(LoginRequiredMixin, TemplateView):
     #template_name = 'templates/mybook/mypage.html'
 
-def get_myposts(request):
-        posts = Post.objects.filter(published_date__lte=timezone.now(),author=request.user).order_by('published_date')
-        #return posts
-        return render(request, 'mybook/mypage.html', {'posts':posts})
+#def get_myposts(request):
+#        posts = Post.objects.filter(published_date__lte=timezone.now(),author=request.user).order_by('published_date')
+#        #return posts
+#        return render(request, 'mybook/mypage.html', {'posts':posts})
+
+#class MyPageView(LoginRequiredMixin,ListView):
+#    template_name = 'mybook/mypage.html'
+#    context_object_name = 'posts'
+    #model = Post
+#    queryset = Post.objects.filter(published_date__lte=timezone.now(),author=request.user.order_by('published_date'))
+    
+class MyPageView(ListView):
+    template_name = 'mybook/mypage.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        # queryset = super(ListView, self).get_queryset()  
+        queryset = Post.objects.filter(published_date__lte=timezone.now(),author=self.request.user).order_by('published_date')
+        return queryset
+    
+
+@login_required
+def like(request,pk):
+    post = get_object_or_404(Post, pk=pk)
+    
+    is_like = Like.objects.filter(user=request.user).filter(post=post).count()
+    # unlike
+    if is_like > 0:
+        liking = Like.objects.get(pk=pk, user=request.user)
+        liking.delete()
+        post.like_num -= 1
+        post.save()
+        messages.warning(request, 'いいねを取り消しました')
+        return redirect(reverse_lazy('post_detail'))
+    # like
+    post.like_num += 1
+    post.save()
+    like = Like()
+    like.user = request.user
+    like.post = post
+    like.save()
+    messages.success(request, 'いいね！しました')
+    return HttpResponseRedirect(reverse_lazy('post_detail'))
