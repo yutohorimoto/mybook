@@ -13,7 +13,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-
+from django.http import HttpResponse, HttpResponseRedirect 
 #@login_required
 #def post_list(request):
 #    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
@@ -167,12 +167,12 @@ def like(request,pk):
     is_like = Like.objects.filter(user=request.user).filter(post=post).count()
     # unlike
     if is_like > 0:
-        liking = Like.objects.get(pk=pk, user=request.user)
+        liking = Like.objects.get(user=request.user)
         liking.delete()
         post.like_num -= 1
         post.save()
         messages.warning(request, 'いいねを取り消しました')
-        return redirect(reverse_lazy('post_detail'))
+        return redirect('post_detail',pk=post.pk)
     # like
     post.like_num += 1
     post.save()
@@ -181,4 +181,5 @@ def like(request,pk):
     like.post = post
     like.save()
     messages.success(request, 'いいね！しました')
-    return HttpResponseRedirect(reverse_lazy('post_detail'))
+    #return HttpResponseRedirect(reverse_lazy('post_detail'))
+    return redirect('post_detail',pk=post.pk)

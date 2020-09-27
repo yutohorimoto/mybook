@@ -5,6 +5,7 @@
     <form method="POST" class="post-form">{% csrf_token %}
         <!--{{ form.as_p }}-->
         <p>タイトル　{{form.book_title}}</p>
+        <p>評価　{{form.rate}}</p>
         <p>作者　{{form.book_author}}</p>
         <p>ジャンル {{form.book_label}}</p>
         <p>あらすじ/本の内容 {{form.book_int}}</p>

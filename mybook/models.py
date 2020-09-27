@@ -12,6 +12,14 @@ label_choices = (
             (5, '自己啓発本'),
             (6, 'その他'),
         )
+
+rate_choice =(
+    (1,'1/5'),
+    (2,'2/5'),
+    (3,'3/5'),
+    (4,'4/5'),
+    (5,'5/5'),
+)
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     book_title = models.CharField(max_length=50)
@@ -20,7 +28,7 @@ class Post(models.Model):
     book_label = models.IntegerField(choices=label_choices,blank=True, null=True)
     book_int = models.CharField(max_length=200,blank=True, null=True)
     text = models.TextField()
-    rate = models.IntegerField(blank=False, default=1, validators=[MaxValueValidator(5),MinValueValidator(1)]*1)
+    rate = models.IntegerField(choices = rate_choice ,blank=False, default=1)
     like_num = models.IntegerField(default=0)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
