@@ -1,0 +1,15 @@
+{% extends 'mybook/base.html' %}
+
+{% block content %}
+        {% for like in posts %}
+            <div class="post">
+                <div class="date">
+                    <p>日時: {{ like.post.published_date }}</p>
+                </div>
+                <p>User: {{ like.post.author}}</p>
+                <h2><a href="{% url 'post_detail' pk=like.post.pk %}">{{ like.post.book_title }}</a></h2>
+                <h5>作者：{{like.post.book_author}}</h5>
+                <p>感想： {{ like.post.text|linebreaksbr }}</p>
+            </div>
+        {% endfor %}
+{% endblock %}

@@ -46,3 +46,16 @@ class Like(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='like_user')
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return str(self.user)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comment_user')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    text = models.TextField()
+
+    def __str__(self):
+        return self.text
+        

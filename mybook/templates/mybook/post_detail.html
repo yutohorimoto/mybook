@@ -14,10 +14,30 @@
         <p>User: {{ post.author}}</p>
         <h2>{{ post.book_title }}</h2><span class="star5_rating" data-rate='{{post.rate}}'></span>
         <h5>作者：{{post.book_author}}</h5>
-        <h5>ジャンル：{{post.book_label}}</h5>
+        <h5>ジャンル：{% if post.book_label == 0 %}小説{% endif %}
+            {% if post.book_label == 1 %}漫画{% endif %}
+            {% if post.book_label == 2 %}ビジネス書{% endif %}
+            {% if post.book_label == 3 %}学習書{% endif %}
+            {% if post.book_label == 4 %}教養書{% endif %}
+            {% if post.book_label == 5 %}自己啓発本{% endif %}
+            {% if post.book_label == 6 %}その他{% endif %}
+            {% if post.book_label == Null %}未選択{% endif %}
+        </h5>
         <p>あらすじ/本の内容：{{post.book_int|linebreaksbr}}</p>
         <p>感想：{{ post.text|linebreaksbr }}</p>
         <a href="{% url 'like' pk=post.pk %}">いいね！</a>{{ post.like_num }}
+        {% if check == True %}
+            <p class= 'red'>いいね済み(もう一度クリックすると取消します。)</p>
+        {% else %}
+
+        {% endif %}
+        <h4>コメント欄</h4>
+        {% for comment in comments %}
+        <p>{{ comment.user }} : {{ comment.date_created }}</p>
+        <p>{{ comment.text }}</p>
+        {% endfor %}
+
+        <a href="{% url 'comment' pk=post.pk %}">コメントする</a>
 
     </div>
 {% endblock %}

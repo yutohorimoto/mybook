@@ -1,15 +1,51 @@
-{% extends 'mybook/base.html' %}
 
-{% block content %}
-        {% for post in posts %}
-            <div class="post">
-                <div class="date">
-                    <p>日時: {{ post.published_date }}</p>
+{% load static %}
+<html>
+    <head>
+        <title>My Book</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="{% static 'css/mybook.css' %}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Amatic+SC:700">
+        <link href="https://fonts.googleapis.com/earlyaccess/hannari.css" rel="stylesheet">
+
+    </head>
+    <body>
+            {% if user.id  %}
+            <p>ログインしました．</p>
+            <p>こんにちは，{{ user.username }}さん</p>
+            <a href="{% url 'logout' %}">ログアウトする</a>
+            {% else %}
+            <a href="{% url 'login' %}">ログイン</a>
+            <a href="{% url 'create_account' %}">アカウント作成</a>
+            {% endif %}
+        <div  class="page-header"> 
+            <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+            <h1><a href="/">My Book</a></h1>
+        </div>
+        <div class ='mypage'>
+            <h3><a href ="{% url 'mypage' %}">mypage</a></h3>
+            <p><a href ="{% url 'mylike' %}">いいね</a></p>
+        </div>
+        <div class='alert'>
+            <p>他のユーザーの投稿を編集、削除することは出来ません</p>
+        </div>
+        <div class="content container">
+            <div class="row">
+                <div class="col-md-8">
+                    {% for post in posts %}
+                    <div class="post">
+                        <div class="date">
+                            <p>日時: {{ post.published_date }}</p>
+                        </div>
+                        <p>User: {{ post.author}}</p>
+                        <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.book_title }}</a></h2>
+                        <h5>作者：{{post.book_author}}</h5>
+                        <p>感想： {{ post.text|linebreaksbr }}</p>
+                    </div>
+                {% endfor %}
                 </div>
-                <p>User: {{ post.author}}</p>
-                <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.book_title }}</a></h2>
-                <h5>作者：{{post.book_author}}</h5>
-                <p>感想： {{ post.text|linebreaksbr }}</p>
             </div>
-        {% endfor %}
-{% endblock %}
+        </div>
+    </body>
+</html>

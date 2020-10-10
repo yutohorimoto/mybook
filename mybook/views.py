@@ -2,10 +2,10 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate,logout
 from django.views import View
-from django.views.generic import CreateView, TemplateView,ListView,DetailView,DeleteView
+from django.views.generic import CreateView, TemplateView,ListView,DetailView,DeleteView,FormView
 from django.utils import timezone
-from .models import Post,Like
-from .forms import PostForm,UserCreateForm, LoginForm
+from .models import Post,Like,Comment
+from .forms import PostForm,UserCreateForm, LoginForm,CommentForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -14,6 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect 
+from django.utils.functional import cached_property
 #@login_required
 #def post_list(request):
 #    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
@@ -28,12 +29,31 @@ class PostListView(LoginRequiredMixin,ListView):
 #@login_required
 #def post_detail(request, pk):
 #    post = get_object_or_404(Post, pk=pk)
-#    return render(request, 'mybook/post_detail.html', {'post': post})
+#    likes = Like.objects.filter(post=post,user=request.user).exists()
+    #return render(request, 'mybook/post_detail.html', {'post': post},{'likes': likes})
+    #return render(request, 'mybook/post_detail.html', {'post': post})
 
 class PostDetail(LoginRequiredMixin,DetailView):
     template_name = 'mybook/post_detail.html'
     model = Post
     context_object_name = 'post'
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['check'] = Like.objects.filter(user=self.request.user, post=self.kwargs.get('pk')).exists()
+        context['comments']= Comment.objects.filter(post=self.kwargs.get('pk'))
+        return context
+
+class NewPost(FormView):
+   template_name ="mybook/post_edit.html"
+   form_class=PostForm
+   def form_valid(self, form):
+        post = form.save(commit=False)
+        post.author = self.request.user
+        post.published_date = timezone.now()
+        post.save()
+        return super().form_valid(form)
+   def get_success_url(self, **kwargs):
+       return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
 
 @login_required
 def post_new(request):
@@ -162,17 +182,20 @@ class MyPageView(ListView):
 
 @login_required
 def like(request,pk):
+#def like(request, *args, **kwargs):
     post = get_object_or_404(Post, pk=pk)
-    
+    #post = Post.objects.get(id=kwargs['post_id'])
     is_like = Like.objects.filter(user=request.user).filter(post=post).count()
     # unlike
     if is_like > 0:
-        liking = Like.objects.get(user=request.user)
+        #liking = Like.objects.get(user=request.user,post__id=kwargs['post_id'])
+        liking = Like.objects.get(user=request.user,post=post)
         liking.delete()
         post.like_num -= 1
         post.save()
-        messages.warning(request, 'いいねを取り消しました')
+        #messages.warning(request, 'いいねを取り消しました')
         return redirect('post_detail',pk=post.pk)
+        #return redirect(reverse_lazy('posts:post_detail', kwargs={'post_id': kwargs['post_id']}))
     # like
     post.like_num += 1
     post.save()
@@ -180,6 +203,38 @@ def like(request,pk):
     like.user = request.user
     like.post = post
     like.save()
-    messages.success(request, 'いいね！しました')
-    #return HttpResponseRedirect(reverse_lazy('post_detail'))
+    #messages.success(request, 'いいね！しました')
     return redirect('post_detail',pk=post.pk)
+    #return HttpResponseRedirect(reverse_lazy('posts:post_detail', kwargs={'post_id': kwargs['post_id']}))
+
+#@login_required
+#def myLike(request):  
+#    posts = Like.objects.filter(date_created__lte=timezone.now(),user=request.user).order_by('date_created')
+
+#    return render(request, 'mybook/mylike.html', {'posts':posts})
+
+class MyLikeView(ListView):
+    template_name = 'mybook/mylike.html'
+    context_object_name = 'posts'
+    def get_queryset(self):
+        # queryset = super(ListView, self).get_queryset()  
+        queryset = Like.objects.filter(date_created__lte=timezone.now(),user=self.request.user).order_by('date_created')
+        return queryset
+
+@login_required
+def comment(request,pk):
+    
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            #comment.date_created = timezone.now()
+            #posts = Post.objects.filter(pk=pk)
+            #comment.post = posts.first()
+            comment.post = Post.objects.get(pk=pk)
+            comment.save()
+            return redirect('post_detail', pk=comment.post.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'mybook/comment.html', {'form': form})

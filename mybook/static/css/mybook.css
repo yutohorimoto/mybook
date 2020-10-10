@@ -93,3 +93,7 @@ p {
 .star5_rating[data-rate="1"]:after{ width: 20%; } /* 星1 */
 .star5_rating[data-rate="0.5"]:after{ width: 10%; } /* 星0.5 */
 .star5_rating[data-rate="0"]:after{ width: 0%; } /* 星0 */
+
+.red{
+    color:red;
+}

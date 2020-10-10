@@ -9,6 +9,7 @@ urlpatterns = [
     #path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('post/<int:pk>/', views.PostDetail.as_view(), name='post_detail'),
     path('post/new/', views.post_new, name='post_new'),
+    #path('post/new/', views.NewPost.as_view(), name='post_new'),
     path('post/<int:pk>/edit/', views.post_edit, name='post_edit'),
     #path('post/<int:pk>/delete/', views.post_delete, name='post_delete'),
     path('post/<int:pk>/delete/', views.PostDelete.as_view(), name='post_delete'),
@@ -26,4 +27,7 @@ urlpatterns = [
     path('accounts/login/',views.account_login, name='account_login'),
     #path('follow/<int:pk>/', views.followPost, name='follow'),
     path('post/<int:pk>/like', views.like, name='like'),
+    path('mypage/like',views.MyLikeView.as_view(),name ='mylike'),
+    path('post/<int:pk>/comment', views.comment, name='comment'),
+    #path('mypage/like',views.myLike,name ='mylike'),
 ]
