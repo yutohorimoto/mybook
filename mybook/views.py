@@ -20,6 +20,9 @@ from django.utils.functional import cached_property
 #    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
 #    return render(request, 'mybook/post_list.html', {'posts':posts})
 
+def home_page(request):
+    return render(request, 'mybook/home.html')
+
 class PostListView(LoginRequiredMixin,ListView):
     template_name = 'mybook/post_list.html'
     #model = Post
